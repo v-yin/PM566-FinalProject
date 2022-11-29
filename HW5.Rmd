@@ -1,6 +1,6 @@
 ---
 title: "Additional maps"
-author: "VY"
+author: "Victoria Yin"
 output: 
     html_document:
         toc: TRUE
@@ -152,7 +152,7 @@ chains <- unique(chains, by = "FACILITY_ID")
 
 ```{r mapping, echo=FALSE}
 
-zips <- unique(chains$FACILITY_ZIP)
+zips <- unique(chains$FACILITY_ZIP)e 
 
 lamap <- zctas(
   cb = TRUE, 
@@ -165,16 +165,66 @@ chains <- lamap %>% left_join(chains, by = c("GEOID10" = "FACILITY_ZIP"))
 
 score.pal <- colorNumeric("magma", domain=chains$avgscore)
 
-
 scoremap <- leaflet(chains) %>%
   addProviderTiles("CartoDB.Positron") %>%
   addCircles(
     lat = ~latitude, lng = ~longitude,
-    label = ~paste0(paste(FACILITY_NAME), ", ", paste0(round(avgscore, 2))), color = ~score.pal(avgscore),
+    label = ~paste0(paste(FACILITY_NAME), ", ", paste0(round(chains$avgscore), 2)), color = ~score.pal(avgscore),
     opacity = 1, fillOpacity = 1, radius = 200
   ) %>%
   addLegend("bottomright", pal=score.pal, values = chains$avgscore, title= "Inspection Score", opacity=1) %>%
   addControl("Average Inspection Scores by Chain Restaurant", position = "bottomleft")
+
+Ob.pal <- colorNumeric("Greens", domain=chains$Prop_obse)
+Obmap <- leaflet(lamap) %>% addTiles() %>%
+  addPolygons(data=chains,
+              color = ~Ob.pal(Prop_obse)) %>%
+  addCircles(
+    lat = ~chains$latitude, lng = ~chains$longitude,
+   label = ~paste0(paste(chains$FACILITY_NAME), ", ", paste0(round(chains$avgscore), 2)), color = ~score.pal(chains$avgscore),
+    opacity = 0.5, fillOpacity = 0.5, radius = 10
+  ) %>%
+    addLegend("bottomright", pal = Ob.pal, values = ~chains$Prop_obse,
+    title = "Proportion Obesity",
+    opacity = 1
+  ) %>%
+  addLegend("bottomleft", pal = score.pal, values = ~chains$SCORE,
+            title = "Inspection Score",
+            opacity = 1)
+DM.pal <- colorNumeric("Blues", domain=chains$Prop_DM)
+DMmap <- leaflet(lamap) %>% addTiles() %>%
+  addPolygons(data=chains,
+              color = ~DM.pal(Prop_DM)) %>%
+  addCircles(
+    lat = ~chains$latitude, lng = ~chains$longitude,
+   label = ~paste0(paste(chains$FACILITY_NAME), ", ", paste0(round(chains$avgscore), 2)), color = ~score.pal(chains$avgscore),
+    opacity = 0.5, fillOpacity = 0.5, radius = 10
+  ) %>%
+    addLegend("bottomright", pal = DM.pal, values = ~chains$Prop_DM,
+    title = "Proportion Diabetes",
+    opacity = 1
+  ) %>%
+  addLegend("bottomleft", pal = score.pal, values = ~chains$SCORE,
+            title = "Inspection Score",
+            opacity = 1)
+
+Dep.pal <- colorNumeric("BuGn", domain=chains$Prop_depr)
+Depmap <- leaflet(lamap) %>% addTiles() %>%
+  addPolygons(data=chains,
+              color = ~Dep.pal(Prop_depr)) %>%
+  addCircles(
+    lat = ~chains$latitude, lng = ~chains$longitude,
+   label = ~paste0(paste(chains$FACILITY_NAME), ", ", paste0(round(chains$avgscore), 2)), color = ~score.pal(chains$avgscore),
+    opacity = 0.5, fillOpacity = 0.5, radius = 10
+  ) %>%
+    addLegend("bottomright", pal = Dep.pal, values = ~chains$Prop_depr,
+    title = "Proportion Depressed",
+    opacity = 1
+  ) %>%
+  addLegend("bottomleft", pal = score.pal, values = ~chains$SCORE,
+            title = "Inspection Score",
+            opacity = 1)
+
 
 ```
 
@@ -184,6 +234,24 @@ scoremap <- leaflet(chains) %>%
 
 ```{r echo=TRUE}
 scoremap
+```
+
+## Map of chain restaurant scores with heat map of diabetes proportion
+
+```{r}
+DMmap
+```
+
+## Map of chain restaurant scores with heat map of obesity proportion
+
+```{r}
+Obmap
+```
+
+## Map of chain restaurant scores with heat map of proportion depressed
+
+```{r}
+Depmap
 ```
 
 

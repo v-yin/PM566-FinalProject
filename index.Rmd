@@ -8,7 +8,7 @@ output:
         code_folding: hide
 ---
 
-This is my PM566 Final Project website.
+PM566 Final Project
 
 <br>
 
