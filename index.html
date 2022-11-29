@@ -436,37 +436,17 @@ health status, only chain restaurants were analyzed (due to sample
 size). Chain restaurant addresses were geocoded using tidygeocoder and
 OpenStreetMaps in order to map latitudes and longitudes on the plots.
 This method does not require an API key!</p>
-<pre><code>## Source: local data table [475,719 x 102]
-## Call:   `_DT4`[!`_DT5`, on = .(word)]
-## 
-##   FACILITY_CITY ACTIVI…¹ OWNER…² OWNER…³ FACIL…⁴ RECOR…⁵ PROGR…⁶ PROGR…⁷ PROGR…⁸
-##   &lt;chr&gt;         &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;int&gt;
-## 1 ALHAMBRA      2021/10… OW0269… SKATE … FA0280… PR0235… SKATES… ACTIVE     1634
-## 2 ALHAMBRA      2018/05… OW0031… SANCHE… FA0006… PR0037… BUN N … ACTIVE     1638
-## 3 ALHAMBRA      2018/05… OW0031… SANCHE… FA0006… PR0037… BUN N … ACTIVE     1638
-## 4 ALHAMBRA      2021/07… OW0033… STARBU… FA0048… PR0005… STARBU… ACTIVE     1633
-## 5 ALHAMBRA      2021/07… OW0033… STARBU… FA0048… PR0005… STARBU… ACTIVE     1633
-## 6 ALHAMBRA      2019/05… OW0185… SAN TU… FA0179… PR0173… RICK&#39;S… ACTIVE     1638
-## # … with 475,713 more rows, 93 more variables: PE_DESCRIPTION &lt;chr&gt;,
-## #   FACILITY_ADDRESS &lt;chr&gt;, FACILITY_STATE &lt;chr&gt;, FACILITY_ZIP &lt;int&gt;,
-## #   SERVICE_CODE &lt;int&gt;, SERVICE_DESCRIPTION &lt;chr&gt;, SCORE &lt;int&gt;,
-## #   SERIAL_NUMBER &lt;chr&gt;, EMPLOYEE_ID &lt;chr&gt;, ObjectId.x &lt;int&gt;, Pop_Tot &lt;int&gt;,
-## #   Prop_18y &lt;dbl&gt;, Prop_64y &lt;dbl&gt;, Prop_65y_ &lt;dbl&gt;, Prop_Blk &lt;dbl&gt;,
-## #   Prop_Lat &lt;dbl&gt;, Prop_Whi &lt;dbl&gt;, Prop_Asi &lt;dbl&gt;, Prop_Ami &lt;dbl&gt;,
-## #   Prop_NHO &lt;dbl&gt;, Prop_FPL1 &lt;dbl&gt;, Prop_FPL2 &lt;dbl&gt;, Prop_forb &lt;dbl&gt;, …
-## 
-## # Use as.data.table()/as.data.frame()/as_tibble() to access results</code></pre>
 <p>In total, there were 252773 inspections of 39423 restaurants in 66
 cities within LA County.</p>
 <p>Of the 252773 inspections included in the analysis, the average grade
-was 93.9351117 with a standard deviation of 3.8669866. The highest score
-was a perfect score, 100 whereas the lowest score was 54. Interestingly,
-there appears to be a peak at 90, which corresponds to the lowest
-possible score to achieve an A rating. This may hint at bias involved in
-the inspection grading process.</p>
+was 93.94 with a standard deviation of 3.87. The highest score was a
+perfect score, 100 whereas the lowest score was 54. Interestingly, there
+appears to be a peak at 90, which corresponds to the lowest possible
+score to achieve an A rating. This may hint at bias involved in the
+inspection grading process.</p>
 <pre class="r"><code>scorehisto</code></pre>
 <p><img src="index_files/figure-html/histogram-1.png" width="700px" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>citysum %&gt;% arrange(desc(mean_score)) %&gt;% slice(1:5) %&gt;% knitr::kable(col.names = c(&quot;City&quot;, &quot;Average Score&quot;, &quot;Standard Deviation of Score&quot;, &quot;Number of Inspections in City&quot;, &quot;Proportion Diabetes&quot;, &quot;Proportion Obesity&quot;, &quot;Proportion Depression&quot;), caption = &quot;Top 5 Cities&quot;)</code></pre>
+<pre class="r"><code>citysum %&gt;% arrange(desc(mean_score)) %&gt;% slice(1:5) %&gt;%  knitr::kable(col.names = c(&quot;City&quot;, &quot;Average Score&quot;, &quot;Standard Deviation of Score&quot;, &quot;Number of Inspections in City&quot;, &quot;Proportion Diabetes&quot;, &quot;Proportion Obesity&quot;, &quot;Proportion Depression&quot;), caption = &quot;Top 5 Cities&quot;) </code></pre>
 <table>
 <caption>Top 5 Cities</caption>
 <colgroup>
@@ -492,48 +472,48 @@ the inspection grading process.</p>
 <tbody>
 <tr class="odd">
 <td align="left">LONG BEACH</td>
-<td align="right">97.37500</td>
-<td align="right">0.7440238</td>
+<td align="right">97</td>
+<td align="right">0.74</td>
 <td align="right">2</td>
-<td align="right">0.1167</td>
-<td align="right">0.2422</td>
-<td align="right">0.0884</td>
+<td align="right">0.12</td>
+<td align="right">0.24</td>
+<td align="right">0.09</td>
 </tr>
 <tr class="even">
 <td align="left">CALABASAS</td>
-<td align="right">96.03195</td>
-<td align="right">2.9069571</td>
+<td align="right">96</td>
+<td align="right">2.91</td>
 <td align="right">127</td>
 <td align="right">NA</td>
-<td align="right">0.1094</td>
-<td align="right">0.1412</td>
+<td align="right">0.11</td>
+<td align="right">0.14</td>
 </tr>
 <tr class="odd">
 <td align="left">SANTA CLARITA</td>
-<td align="right">95.74072</td>
-<td align="right">3.2719696</td>
+<td align="right">96</td>
+<td align="right">3.27</td>
 <td align="right">402</td>
-<td align="right">0.0880</td>
-<td align="right">0.2528</td>
-<td align="right">0.1126</td>
+<td align="right">0.09</td>
+<td align="right">0.25</td>
+<td align="right">0.11</td>
 </tr>
 <tr class="even">
 <td align="left">MAYWOOD</td>
-<td align="right">95.60426</td>
-<td align="right">3.4357203</td>
+<td align="right">96</td>
+<td align="right">3.44</td>
 <td align="right">156</td>
-<td align="right">0.0929</td>
-<td align="right">0.2925</td>
-<td align="right">0.0720</td>
+<td align="right">0.09</td>
+<td align="right">0.29</td>
+<td align="right">0.07</td>
 </tr>
 <tr class="odd">
 <td align="left">EAST LOS ANGELES</td>
-<td align="right">95.49254</td>
-<td align="right">3.4039778</td>
+<td align="right">95</td>
+<td align="right">3.40</td>
 <td align="right">12</td>
-<td align="right">0.0934</td>
-<td align="right">0.2778</td>
-<td align="right">0.0764</td>
+<td align="right">0.09</td>
+<td align="right">0.28</td>
+<td align="right">0.08</td>
 </tr>
 </tbody>
 </table>
@@ -563,48 +543,48 @@ the inspection grading process.</p>
 <tbody>
 <tr class="odd">
 <td align="left">MONTEREY PARK</td>
-<td align="right">91.63380</td>
-<td align="right">5.506981</td>
+<td align="right">92</td>
+<td align="right">5.5</td>
 <td align="right">467</td>
-<td align="right">0.1222</td>
-<td align="right">0.1058</td>
-<td align="right">0.0442</td>
+<td align="right">0.12</td>
+<td align="right">0.11</td>
+<td align="right">0.04</td>
 </tr>
 <tr class="even">
 <td align="left">ROWLAND HEIGHTS</td>
-<td align="right">91.68030</td>
-<td align="right">4.965620</td>
+<td align="right">92</td>
+<td align="right">5.0</td>
 <td align="right">429</td>
-<td align="right">0.1049</td>
-<td align="right">0.1848</td>
-<td align="right">0.0422</td>
+<td align="right">0.10</td>
+<td align="right">0.18</td>
+<td align="right">0.04</td>
 </tr>
 <tr class="odd">
 <td align="left">ALHAMBRA</td>
-<td align="right">92.36034</td>
-<td align="right">4.893888</td>
+<td align="right">92</td>
+<td align="right">4.9</td>
 <td align="right">477</td>
-<td align="right">0.1040</td>
-<td align="right">0.1358</td>
-<td align="right">0.0523</td>
+<td align="right">0.10</td>
+<td align="right">0.14</td>
+<td align="right">0.05</td>
 </tr>
 <tr class="even">
 <td align="left">GARDENA</td>
-<td align="right">92.36540</td>
-<td align="right">4.176667</td>
+<td align="right">92</td>
+<td align="right">4.2</td>
 <td align="right">685</td>
-<td align="right">0.0991</td>
-<td align="right">0.2770</td>
-<td align="right">0.0584</td>
+<td align="right">0.10</td>
+<td align="right">0.28</td>
+<td align="right">0.06</td>
 </tr>
 <tr class="odd">
 <td align="left">CERRITOS</td>
-<td align="right">92.59487</td>
-<td align="right">4.416418</td>
+<td align="right">93</td>
+<td align="right">4.4</td>
 <td align="right">344</td>
-<td align="right">0.0948</td>
-<td align="right">0.2342</td>
-<td align="right">0.0410</td>
+<td align="right">0.09</td>
+<td align="right">0.23</td>
+<td align="right">0.04</td>
 </tr>
 </tbody>
 </table>

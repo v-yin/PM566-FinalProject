@@ -101,7 +101,7 @@ resthealth <- data.table(resthealth)
 library(data.table)
 resthealth <- resthealth[SCORE>50]
 # Find restaurant chains
-resthealth %>% unnest_ngrams(word, FACILITY_NAME, n=2) %>% anti_join(stop_words, by = c("word")) # %>% count(word, sort=TRUE) %>% as_tibble() %>% print(n=100)
+# resthealth %>% unnest_ngrams(word, FACILITY_NAME, n=2) %>% anti_join(stop_words, by = c("word")) # %>% count(word, sort=TRUE) %>% as_tibble() %>% print(n=100)
 # Create chain variable
 resthealth$FACILITY_NAME <- toupper(resthealth$FACILITY_NAME)
 resthealth$CHAIN <- ifelse(grepl("MCDONALD", resthealth$FACILITY_NAME), "McDonald's", ifelse(grepl("JACK IN THE BOX", resthealth$FACILITY_NAME), "Jack in the Box", ifelse(grepl("STARBUCKS", resthealth$FACILITY_NAME), "Starbucks", ifelse(grepl("EL POLLO LOCO", resthealth$FACILITY_NAME), "El Pollo Loco", ifelse(grepl("PANDA EXPRESS", resthealth$FACILITY_NAME), "Panda Express", ifelse(grepl("TACO BELL", resthealth$FACILITY_NAME), "Taco Bell", ifelse(grepl("DEL TACO", resthealth$FACILITY_NAME), "Del Taco", ifelse(grepl("OUT BURGER", resthealth$FACILITY_NAME), "In N Out", ifelse(grepl("PANERA BREAD", resthealth$FACILITY_NAME), "Panera Bread", NA)))))))))
@@ -225,6 +225,7 @@ scoremap <- leaflet(chains) %>%
   addLegend("bottomright", pal=score.pal, values = chains$avgscore, title= "Inspection Score", opacity=1) %>%
   addControl("Average Inspection Scores by Chain Restaurant", position = "bottomleft")
 
+mapview(lamap)
 ```
 
 ## Showcasing scatterplots {.tabset}
