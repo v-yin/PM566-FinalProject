@@ -19,6 +19,8 @@ if(!require(tidytext)) install.packages("tidytext")
 library(tidytext)
 if(!require(tidyverse)) install.packages("tidyverse")
 library(tidyverse)
+if(!require(tidyr)) install.packages("tidyverse")
+library(tidyr)
 if(!require(dtplyr)) install.packages("dtplyr")
 library(dtplyr)
 if(!require(knitr)) install.packages("knitr")
@@ -37,6 +39,20 @@ if(!require(leaflet.extras)) install.packages("leaflet.extras")
 library(leaflet.extras)
 if(!require(plotly)) install.packages("plotly")
 library(plotly)
+if(!require(RColorBrewer)) install.packages("RColorBrewer")
+library(RColorBrewer)
+if(!require(tidycensus)) install.packages("tidycensus")
+library(tidycensus)
+census_api_key('4a32093812adf9abc51000fa68f41308a905784a')
+if(!require(tigris)) install.packages("tigris")
+library(tigris)
+options(tigris_use_cache = TRUE)
+if(!require(sf)) install.packages("sf")
+library(sf)
+if(!require(tmap)) install.packages("tmap")
+library(tmap)
+if(!require(mapview)) install.packages("mapview")
+library(mapview)
 
 opts_chunk$set(
   warning = FALSE,
@@ -119,7 +135,6 @@ chains <- as.data.table(chains)
 ```
 
 ```{r initial data exploration, echo=FALSE}
-
 citysum <- resthealth %>% group_by(FACILITY_CITY) %>% summarise(mean_score = mean(SCORE), sd_fev = sd(SCORE), ninspect = n_distinct(RECORD_ID), Prop_DM, Prop_obse, Prop_depr) %>% distinct()
 citysum <- as.data.frame(citysum)
 
@@ -137,38 +152,66 @@ chains <- chains[ , ':=' (
 fit1 <- lm(Prop_DM ~ mean_score, data = citysum)
 scatter1 <- citysum %>% filter(!is.na(Prop_DM)) %>%
   plot_ly(x = ~mean_score, y = ~Prop_DM,
-          type = 'scatter', mode = 'markers') %>%
+          type = 'scatter', mode = 'markers', marker = list(size = 5, color = colorRampPalette(brewer.pal(10,"Spectral"))(66))) %>%
           add_markers( hoverinfo = 'text',
-          text = ~paste(paste(FACILITY_CITY),  paste(" Average score:",
-                        mean_score, sep=""), paste(" Proportion DM:",
+          text = ~paste(paste(FACILITY_CITY),  paste0(" Average score:",
+                        round(mean_score, 2), sep=""), paste(" Proportion DM:",
                         Prop_DM, sep=""))) %>%
   add_lines(x = ~mean_score, y=fitted(fit1)) %>%
-  layout(title = "Average restaurant inspection score vs proportion of diabetes by city", yaxis = list(title = "Proportion Diabetes"), xaxis = list(title = "Average Inspection Score"), hovermode = "compare") %>%
+  layout(title = "Average restaurant inspection score vs proportion of diabetes by city", yaxis = list(title = "Proportion Diabetes", hoverformat='.2f'), xaxis = list(title = "Average Inspection Score", hoverformat = '.2f'), hovermode = "compare") %>%
   layout(showlegend = F)
 
 fit2 <- lm(Prop_obse ~ mean_score, data = citysum)
 scatter2 <- citysum %>% filter(!is.na(Prop_obse)) %>%
   plot_ly(x = ~mean_score, y = ~Prop_obse,
-          type = 'scatter', mode = 'markers') %>%
+          type = 'scatter', mode = 'markers', marker = list(size = 5, color = colorRampPalette(brewer.pal(10,"Paired"))(66))) %>%
           add_markers( hoverinfo = 'text',
-          text = ~paste(paste(FACILITY_CITY),  paste(" Average score:",
-                        mean_score, sep=""), paste(" Proportion Obese:",
+          text = ~paste(paste(FACILITY_CITY),  paste0(" Average score:",
+                        round(mean_score, 2), sep=""), paste(" Proportion Obese:",
                         Prop_obse, sep=""))) %>%
   add_lines(x = ~mean_score, y=fitted(fit2)) %>%
   layout(title = "Average restaurant inspection score vs proportion of obesity by city", yaxis = list(title = "Proportion Obesity"), xaxis = list(title = "Average Inspection Score"), hovermode = "compare") %>%
-  layout(plot_bgcolor='#e5ecf6', showlegend = F)
+  layout(showlegend = F)
 
 fit3 <- lm(Prop_depr ~ mean_score, data = citysum)
 scatter3 <- citysum %>% filter(!is.na(Prop_depr)) %>%
   plot_ly(x = ~mean_score, y = ~Prop_depr,
-          type = 'scatter', mode = 'markers') %>%
+          type = 'scatter', mode = 'markers', marker = list(size = 5, color = colorRampPalette(brewer.pal(10,"Pastel2"))(66))) %>%
           add_markers( hoverinfo = 'text',
-          text = ~paste(paste(FACILITY_CITY),  paste(" Average score:",
-                        mean_score, sep=""), paste(" Proportion with depression:",
-                        Prop_depr, sep=""))) %>%
+          text = ~paste(paste(FACILITY_CITY),  paste0(" Average score:",
+                        round(mean_score, 2), sep=""), paste(" Proportion with depression:",Prop_depr, sep=""))) %>%
   add_lines(x = ~mean_score, y=fitted(fit3)) %>%
   layout(title = "Average restaurant inspection score vs proportion with depression by city", yaxis = list(title = "Proportion Depression"), xaxis = list(title = "Average Inspection Score"), hovermode = "compare") %>%
-  layout(plot_bgcolor='#e5ecf6', showlegend = F)
+  layout(showlegend = F)
+
+zips <- unique(chains$FACILITY_ZIP)
+
+lamap <- zctas(
+  cb = TRUE, 
+  starts_with = paste0(zips),
+  year = 2018
+)
+
+chains$FACILITY_ZIP <- as.character(chains$FACILITY_ZIP)
+chains <- lamap %>% left_join(chains, by = c("GEOID10" = "FACILITY_ZIP"))
+
+score.pal <- colorNumeric("inferno", domain=chains$SCORE)
+DM.pal <- colorNumeric("viridis", domain=chains$Prop_DM)
+DMmap <- leaflet(lamap) %>% addTiles() %>%
+  addPolygons(data=chains,
+              color = ~DM.pal(Prop_DM)) %>%
+  addCircles(
+    lat = ~chains$latitude, lng = ~chains$longitude,
+    label = ~paste0(chains$SCORE), color = ~score.pal(chains$SCORE),
+    opacity = 1, fillOpacity = 1, radius = 200
+  ) %>%
+    addLegend("bottomright", pal = DM.pal, values = ~chains$Prop_DM,
+    title = "Proportion Diabetes",
+    opacity = 1
+  ) %>%
+  addLegend("bottomleft", pal = score.pal, values = ~chains$SCORE,
+            title = "Inspection Score",
+            opacity = 1)
 
 ```
 
@@ -191,9 +234,9 @@ scatter2
 scatter3
 ```
 
-### Map of chain restaurants
-```{r echo=FALSE}
-
+### Map of chain restaurants with heat map of proportion with diabetes
+```{r echo=TRUE}
+DMmap
 ```
 
 
