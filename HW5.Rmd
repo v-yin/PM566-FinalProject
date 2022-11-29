@@ -144,6 +144,7 @@ chains <- chains[ , ':=' (
   avgDM = mean(Prop_DM, na.rm = T),
   avgMDD = mean(Prop_depr, na.rm = T),
   avgOB = mean(Prop_obse, na.rm = T)), by = FACILITY_ID]
+chains <- unique(chains, by = "FACILITY_ID")
 ```
 
 
@@ -195,28 +196,24 @@ lamap <- zctas(
 chains$FACILITY_ZIP <- as.character(chains$FACILITY_ZIP)
 chains <- lamap %>% left_join(chains, by = c("GEOID10" = "FACILITY_ZIP"))
 
-score.pal <- colorNumeric("inferno", domain=chains$SCORE)
-DM.pal <- colorNumeric("viridis", domain=chains$Prop_DM)
+score.pal <- colorNumeric("Blues", domain=chains$avgscore)
+DM.pal <- colorNumeric("Greens", domain=chains$Prop_DM)
 DMmap <- leaflet(lamap) %>% addTiles() %>%
   addPolygons(data=chains,
               color = ~DM.pal(Prop_DM)) %>%
   addCircles(
     lat = ~chains$latitude, lng = ~chains$longitude,
-    label = ~paste0(chains$SCORE), color = ~score.pal(chains$SCORE),
+    label = ~paste0(chains$avgscore), color = ~score.pal(chains$avgscore),
     opacity = 1, fillOpacity = 1, radius = 200
   ) %>%
     addLegend("bottomright", pal = DM.pal, values = ~chains$Prop_DM,
     title = "Proportion Diabetes",
     opacity = 1
   ) %>%
-  addLegend("bottomleft", pal = score.pal, values = ~chains$SCORE,
+  addLegend("bottomleft", pal = score.pal, values = ~chains$avgscore,
             title = "Inspection Score",
             opacity = 1)
 
-```
-## Chain restaurant inspection scores with heat map of proportion with diabetes
-```{r echo=TRUE}
-DMmap
 ```
 
 ## Showcasing scatterplots {.tabset}
@@ -236,8 +233,12 @@ scatter2
 ```{r echo=TRUE}
 scatter3
 ```
-
-
-
-
 ## {-}
+
+## Chain restaurant inspection scores with heat map of proportion with diabetes
+This has a HUGE amount of data, so I do not expect it to load
+```{r echo=TRUE}
+DMmap
+```
+
+
