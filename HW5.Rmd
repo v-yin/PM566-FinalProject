@@ -1,0 +1,200 @@
+---
+title: "HW5, Interactive Visualization"
+author: "VY"
+output: 
+    html_document:
+        toc: TRUE
+        toc_float: TRUE
+        code_folding: hide
+---
+```{r setup, message=FALSE, echo=FALSE, warning=FALSE}
+# Initialize code chunk options
+if(!require(data.table)) install.packages("data.table")
+library(data.table)
+if(!require(dplyr)) install.packages("dplyr")
+library(dplyr)
+if(!require(ggplot2)) install.packages("ggplot2")
+library(ggplot2)
+if(!require(tidytext)) install.packages("tidytext")
+library(tidytext)
+if(!require(tidyverse)) install.packages("tidyverse")
+library(tidyverse)
+if(!require(dtplyr)) install.packages("dtplyr")
+library(dtplyr)
+if(!require(knitr)) install.packages("knitr")
+library(knitr)
+if(!require(forcats)) install.packages("forcats")
+library(forcats)
+if(!require(utils)) install.packages("utils")
+library(utils)
+if(!require(downloader)) install.packages("downloader")
+library(downloader)
+if(!require(ggmap)) install.packages("ggmap")
+library(ggmap)
+if(!require(leaflet)) install.packages("leaflet")
+library(leaflet)
+if(!require(leaflet.extras)) install.packages("leaflet.extras")
+library(leaflet.extras)
+if(!require(plotly)) install.packages("plotly")
+library(plotly)
+
+opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  eval=TRUE,
+  echo = TRUE,
+  cache = FALSE,
+  fig.width = 7, 
+  fig.align = 'center',
+  fig.asp = 0.618,
+  out.width = "700px")
+
+# Read in and clean data
+if (!file.exists("LACinspections.csv.zip"))
+  download(
+    url = "https://github.com/v-yin/PM566-Midterm/blob/main/LACinspections.csv.zip?raw=true",
+    dest = "LACinspections.csv.zip",
+    mode="wb"
+    )
+unzip("LACinspections.csv.zip", exdir="./")
+inspect <- read.csv("LACinspections.csv")
+
+if (!file.exists("LAChealth.csv"))
+  download(
+    url = "https://raw.githubusercontent.com/v-yin/PM566-Midterm/main/LAChealth.csv",
+    dest = "LAChealth.csv",
+    mode="wb"
+    )
+health <- read.csv("LAChealth.csv")
+
+health$GEONAME <- toupper(health$GEONAME)
+health$GEONAME <- replace(health$GEONAME, health$GEONAME=="LOS ANGELES, CITY OF", "LOS ANGELES")
+
+resthealth <- merge(
+  x = inspect,
+  y = health,
+  by.x = "FACILITY_CITY",
+  by.y = "GEONAME",
+  all.x = FALSE,
+  all.y = FALSE
+)
+resthealth <- data.table(resthealth)
+
+# Delete scores less than 50
+library(data.table)
+resthealth <- resthealth[SCORE>50]
+# Find restaurant chains
+resthealth %>% unnest_ngrams(word, FACILITY_NAME, n=2) %>% anti_join(stop_words, by = c("word")) # %>% count(word, sort=TRUE) %>% as_tibble() %>% print(n=100)
+# Create chain variable
+resthealth$FACILITY_NAME <- toupper(resthealth$FACILITY_NAME)
+resthealth$CHAIN <- ifelse(grepl("MCDONALD", resthealth$FACILITY_NAME), "McDonald's", ifelse(grepl("JACK IN THE BOX", resthealth$FACILITY_NAME), "Jack in the Box", ifelse(grepl("STARBUCKS", resthealth$FACILITY_NAME), "Starbucks", ifelse(grepl("EL POLLO LOCO", resthealth$FACILITY_NAME), "El Pollo Loco", ifelse(grepl("PANDA EXPRESS", resthealth$FACILITY_NAME), "Panda Express", ifelse(grepl("TACO BELL", resthealth$FACILITY_NAME), "Taco Bell", ifelse(grepl("DEL TACO", resthealth$FACILITY_NAME), "Del Taco", ifelse(grepl("OUT BURGER", resthealth$FACILITY_NAME), "In N Out", ifelse(grepl("PANERA BREAD", resthealth$FACILITY_NAME), "Panera Bread", NA)))))))))
+# Find average inspection score by chain
+chain_avg <- resthealth[ , .(
+  scoreavg = mean(SCORE) 
+), by = "CHAIN"]
+# Clean health outcome data to be numeric
+resthealth$Prop_obse <- as.numeric(as.character(resthealth$Prop_obse))
+resthealth$Prop_DM <- as.numeric(as.character(resthealth$Prop_DM))
+
+library(tidygeocoder)
+
+resthealth$fulladdress <- paste0(resthealth$FACILITY_ADDRESS, ", ", resthealth$FACILITY_CITY, ", CA ", resthealth$FACILITY_ZIP)
+
+# restrict to chains only (too many data points to geocode)
+# chains <- resthealth[!is.na(CHAIN)]
+# chains <- as.data.frame(chains)
+
+# chains <- chains %>% tidygeocoder::geocode(fulladdress, method = 'osm', lat = latitude , long = longitude)
+
+# Take data set from github
+
+if (!file.exists("chains.csv"))
+  download(
+    url = "https://github.com/v-yin/PM566-FinalProject/blob/main/chains.csv?raw=true",
+    dest = "chains.csv",
+    mode="wb"
+    )
+chains <- read.csv("chains.csv")
+chains <- as.data.table(chains)
+```
+
+```{r initial data exploration, echo=FALSE}
+
+citysum <- resthealth %>% group_by(FACILITY_CITY) %>% summarise(mean_score = mean(SCORE), sd_fev = sd(SCORE), ninspect = n_distinct(RECORD_ID), Prop_DM, Prop_obse, Prop_depr) %>% distinct()
+citysum <- as.data.frame(citysum)
+
+chains <- chains[ , ':=' (
+  avgscore = mean(SCORE, na.rm = T),
+  ninspect = n_distinct(RECORD_ID, na.rm=T),
+  avgDM = mean(Prop_DM, na.rm = T),
+  avgMDD = mean(Prop_depr, na.rm = T),
+  avgOB = mean(Prop_obse, na.rm = T)), by = FACILITY_ID]
+```
+
+
+
+```{r plotly, echo=FALSE}
+fit1 <- lm(Prop_DM ~ mean_score, data = citysum)
+scatter1 <- citysum %>% filter(!is.na(Prop_DM)) %>%
+  plot_ly(x = ~mean_score, y = ~Prop_DM,
+          type = 'scatter', mode = 'markers') %>%
+          add_markers( hoverinfo = 'text',
+          text = ~paste(paste(FACILITY_CITY),  paste(" Average score:",
+                        mean_score, sep=""), paste(" Proportion DM:",
+                        Prop_DM, sep=""))) %>%
+  add_lines(x = ~mean_score, y=fitted(fit1)) %>%
+  layout(title = "Average restaurant inspection score vs proportion of diabetes by city", yaxis = list(title = "Proportion Diabetes"), xaxis = list(title = "Average Inspection Score"), hovermode = "compare") %>%
+  layout(showlegend = F)
+
+fit2 <- lm(Prop_obse ~ mean_score, data = citysum)
+scatter2 <- citysum %>% filter(!is.na(Prop_obse)) %>%
+  plot_ly(x = ~mean_score, y = ~Prop_obse,
+          type = 'scatter', mode = 'markers') %>%
+          add_markers( hoverinfo = 'text',
+          text = ~paste(paste(FACILITY_CITY),  paste(" Average score:",
+                        mean_score, sep=""), paste(" Proportion Obese:",
+                        Prop_obse, sep=""))) %>%
+  add_lines(x = ~mean_score, y=fitted(fit2)) %>%
+  layout(title = "Average restaurant inspection score vs proportion of obesity by city", yaxis = list(title = "Proportion Obesity"), xaxis = list(title = "Average Inspection Score"), hovermode = "compare") %>%
+  layout(plot_bgcolor='#e5ecf6', showlegend = F)
+
+fit3 <- lm(Prop_depr ~ mean_score, data = citysum)
+scatter3 <- citysum %>% filter(!is.na(Prop_depr)) %>%
+  plot_ly(x = ~mean_score, y = ~Prop_depr,
+          type = 'scatter', mode = 'markers') %>%
+          add_markers( hoverinfo = 'text',
+          text = ~paste(paste(FACILITY_CITY),  paste(" Average score:",
+                        mean_score, sep=""), paste(" Proportion with depression:",
+                        Prop_depr, sep=""))) %>%
+  add_lines(x = ~mean_score, y=fitted(fit3)) %>%
+  layout(title = "Average restaurant inspection score vs proportion with depression by city", yaxis = list(title = "Proportion Depression"), xaxis = list(title = "Average Inspection Score"), hovermode = "compare") %>%
+  layout(plot_bgcolor='#e5ecf6', showlegend = F)
+
+```
+
+
+## Showcasing plots {.tabset}
+
+### Restaurant Inspection Score vs Diabetes
+
+```{r echo=FALSE, fig.show='asis'}
+scatter1
+```
+
+### Restaurant Inspection Score vs Obesity
+```{r echo=TRUE}
+scatter2
+```
+
+### Restaurant Inspection Score vs Depression
+```{r echo=TRUE}
+scatter3
+```
+
+### Map of chain restaurants
+```{r echo=FALSE}
+
+```
+
+
+## {-}

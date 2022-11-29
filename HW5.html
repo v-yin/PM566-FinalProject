@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="VY" />
+
+
+<title>HW5, Interactive Visualization</title>
+
+<script src="site_libs/header-attrs-2.15/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<script src="site_libs/plotly-binding-4.10.1/plotly.js"></script>
+<script src="site_libs/typedarray-0.1/typedarray.min.js"></script>
+<link href="site_libs/crosstalk-1.2.0/css/crosstalk.min.css" rel="stylesheet" />
+<script src="site_libs/crosstalk-1.2.0/js/crosstalk.min.js"></script>
+<link href="site_libs/plotly-htmlwidgets-css-2.11.1/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="site_libs/plotly-main-2.11.1/plotly-latest.min.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">PM566 Final Project</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="HW5.html">HW 5</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/USCbiostats/PM566">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://uscbiostats.github.io/PM566/">PM566 Home</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">HW5, Interactive Visualization</h1>
+<h4 class="author">VY</h4>
+
+</div>
+
+
+<pre><code>## Source: local data table [475,719 x 102]
+## Call:   `_DT1`[!`_DT2`, on = .(word)]
+## 
+##   FACILITY_CITY ACTIVI…¹ OWNER…² OWNER…³ FACIL…⁴ RECOR…⁵ PROGR…⁶ PROGR…⁷ PROGR…⁸
+##   &lt;chr&gt;         &lt;chr&gt;    &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;     &lt;int&gt;
+## 1 ALHAMBRA      2021/10… OW0269… SKATE … FA0280… PR0235… SKATES… ACTIVE     1634
+## 2 ALHAMBRA      2018/05… OW0031… SANCHE… FA0006… PR0037… BUN N … ACTIVE     1638
+## 3 ALHAMBRA      2018/05… OW0031… SANCHE… FA0006… PR0037… BUN N … ACTIVE     1638
+## 4 ALHAMBRA      2021/07… OW0033… STARBU… FA0048… PR0005… STARBU… ACTIVE     1633
+## 5 ALHAMBRA      2021/07… OW0033… STARBU… FA0048… PR0005… STARBU… ACTIVE     1633
+## 6 ALHAMBRA      2019/05… OW0185… SAN TU… FA0179… PR0173… RICK&#39;S… ACTIVE     1638
+## # … with 475,713 more rows, 93 more variables: PE_DESCRIPTION &lt;chr&gt;,
+## #   FACILITY_ADDRESS &lt;chr&gt;, FACILITY_STATE &lt;chr&gt;, FACILITY_ZIP &lt;int&gt;,
+## #   SERVICE_CODE &lt;int&gt;, SERVICE_DESCRIPTION &lt;chr&gt;, SCORE &lt;int&gt;,
+## #   SERIAL_NUMBER &lt;chr&gt;, EMPLOYEE_ID &lt;chr&gt;, ObjectId.x &lt;int&gt;, Pop_Tot &lt;int&gt;,
+## #   Prop_18y &lt;dbl&gt;, Prop_64y &lt;dbl&gt;, Prop_65y_ &lt;dbl&gt;, Prop_Blk &lt;dbl&gt;,
+## #   Prop_Lat &lt;dbl&gt;, Prop_Whi &lt;dbl&gt;, Prop_Asi &lt;dbl&gt;, Prop_Ami &lt;dbl&gt;,
+## #   Prop_NHO &lt;dbl&gt;, Prop_FPL1 &lt;dbl&gt;, Prop_FPL2 &lt;dbl&gt;, Prop_forb &lt;dbl&gt;, …
+## 
+## # Use as.data.table()/as.data.frame()/as_tibble() to access results</code></pre>
+<div id="showcasing-plots" class="section level2 tabset">
+<h2 class="tabset">Showcasing plots</h2>
+<div id="restaurant-inspection-score-vs-diabetes"
+class="section level3">
+<h3>Restaurant Inspection Score vs Diabetes</h3>
+<div id="htmlwidget-4b66e214ed52a2bc7be4" style="width:700px;height:415.296px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-4b66e214ed52a2bc7be4">{"x":{"visdat":{"17b5f3c7fd779":["function () ","plotlyVisDat"]},"cur_data":"17b5f3c7fd779","attrs":{"17b5f3c7fd779":{"x":{},"y":{},"mode":"markers","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"},"17b5f3c7fd779.1":{"x":{},"y":{},"mode":"markers","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter","hoverinfo":"text","text":{},"inherit":true},"17b5f3c7fd779.2":{"x":{},"y":[0.101630191706354,0.102430046906717,0.102660965026542,0.10275638207442,0.102991721201603,0.102862865931402,0.102991346090668,0.102466534253895,0.103130861816377,0.101919299908306,0.101755457853024,0.102663786784377,0.102605844865329,0.102496465506131,0.102838925613509,0.102208074303825,0.102621875940819,0.102689079817162,0.103303180489599,0.102667677082225,0.101632894901268,0.102718520221585,0.102878665381964,0.102087663950057,0.102240948580093,0.10229638496871,0.102290847663218,0.102380066917401,0.102288771776072,0.102811635899519,0.102431776060205,0.102746346450346,0.102129575161022,0.104308653815507,0.10244001746333,0.102896564114927,0.102492981693888,0.103362854060837,0.103128378036239,0.102801079291398,0.101242127893067,0.102193197931192,0.10326559707891,0.103057045471846,0.102839020285327,0.102530036418426,0.102625283284047,0.101840754359371,0.102096942938013,0.102768332302702,0.10126696566227,0.103202331992874,0.102503536137235,0.102253509753858,0.103435744097285,0.102644168468861,0.10298748324339,0.10263698883929,0.102924203187727,0.101795531071771,0.102600146365289,0.102446026755717,0.101975323152397,0.102614493729265],"mode":"lines","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Average restaurant inspection score vs proportion of diabetes by city","yaxis":{"domain":[0,1],"automargin":true,"title":"Proportion Diabetes"},"xaxis":{"domain":[0,1],"automargin":true,"title":"Average Inspection Score"},"hovermode":"compare","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[92.3603418803419,93.8578431372549,94.2901716068643,94.4688128772636,94.9094184251158,94.6681735985534,94.9087161366313,93.9261553120534,95.1699196326062,92.9016147202403,92.5948670944088,94.2954545454545,94.186974789916,93.9821930646673,94.6233521657251,93.4422626025791,94.2169884169884,94.3428085519922,95.4925373134328,94.3027380211574,92.3654028436019,94.3979273317518,94.6977535738598,93.2168284789644,93.5038103302286,93.6075991930061,93.5972321641613,93.7642698295033,93.5933456561922,94.5722599418041,93.8610804851158,94.4500240269101,93.2952952952953,97.375,93.8765101673047,94.7312638580931,93.975670617592,95.6042590949423,95.1652694610778,94.552495697074,91.6338028169014,93.4144108280255,95.4221730716063,95.0317195325543,94.6235294117647,94.045045045045,94.2233676975945,92.7545605306799,93.2342007434944,94.4911862791806,91.6803044719315,95.3037272006344,93.9954308093995,93.5273275537128,95.7407249466951,94.2587248322148,94.9014840543101,94.2452830188679,94.7830101569714,92.6698927933294,94.1763059701493,93.887760857304,93.0065023028989,94.2031673265264],"y":[0.104,0.1358,0.0819,0.1198,0.1307,0.1154,0.1225,0.1252,0.0714,0.1274,0.0948,0.092,0.1167,0.1187,0.1014,0.0735,0.0875,0.0997,0.0934,0.1236,0.0991,0.0716,0.1045,0.1174,0.1182,0.0924,0.1239,0.0922,0.1197,0.0713,0.0985,0.1321,0.098,0.1167,0.1006,0.1195,0.0405,0.0929,0.1051,0.1048,0.1222,0.1256,0.1217,0.1288,0.0823,0.1196,0.1073,0.09,0.0599,0.1037,0.1049,0.0747,0.1114,0.1167,0.088,0.0588,0.107,0.085,0.1271,0.0792,0.0812,0.1048,0.0804,0.1291],"mode":"markers","type":"scatter","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[92.3603418803419,93.8578431372549,94.2901716068643,94.4688128772636,94.9094184251158,94.6681735985534,94.9087161366313,93.9261553120534,95.1699196326062,92.9016147202403,92.5948670944088,94.2954545454545,94.186974789916,93.9821930646673,94.6233521657251,93.4422626025791,94.2169884169884,94.3428085519922,95.4925373134328,94.3027380211574,92.3654028436019,94.3979273317518,94.6977535738598,93.2168284789644,93.5038103302286,93.6075991930061,93.5972321641613,93.7642698295033,93.5933456561922,94.5722599418041,93.8610804851158,94.4500240269101,93.2952952952953,97.375,93.8765101673047,94.7312638580931,93.975670617592,95.6042590949423,95.1652694610778,94.552495697074,91.6338028169014,93.4144108280255,95.4221730716063,95.0317195325543,94.6235294117647,94.045045045045,94.2233676975945,92.7545605306799,93.2342007434944,94.4911862791806,91.6803044719315,95.3037272006344,93.9954308093995,93.5273275537128,95.7407249466951,94.2587248322148,94.9014840543101,94.2452830188679,94.7830101569714,92.6698927933294,94.1763059701493,93.887760857304,93.0065023028989,94.2031673265264],"y":[0.104,0.1358,0.0819,0.1198,0.1307,0.1154,0.1225,0.1252,0.0714,0.1274,0.0948,0.092,0.1167,0.1187,0.1014,0.0735,0.0875,0.0997,0.0934,0.1236,0.0991,0.0716,0.1045,0.1174,0.1182,0.0924,0.1239,0.0922,0.1197,0.0713,0.0985,0.1321,0.098,0.1167,0.1006,0.1195,0.0405,0.0929,0.1051,0.1048,0.1222,0.1256,0.1217,0.1288,0.0823,0.1196,0.1073,0.09,0.0599,0.1037,0.1049,0.0747,0.1114,0.1167,0.088,0.0588,0.107,0.085,0.1271,0.0792,0.0812,0.1048,0.0804,0.1291],"mode":"markers","type":"scatter","hoverinfo":["text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text"],"text":["ALHAMBRA  Average score:92.3603418803419  Proportion DM:0.104","ALTADENA  Average score:93.8578431372549  Proportion DM:0.1358","ARCADIA  Average score:94.2901716068643  Proportion DM:0.0819","AZUSA  Average score:94.4688128772636  Proportion DM:0.1198","BALDWIN PARK  Average score:94.9094184251158  Proportion DM:0.1307","BELL  Average score:94.6681735985534  Proportion DM:0.1154","BELL GARDENS  Average score:94.9087161366313  Proportion DM:0.1225","BELLFLOWER  Average score:93.9261553120534  Proportion DM:0.1252","BURBANK  Average score:95.1699196326062  Proportion DM:0.0714","CARSON  Average score:92.9016147202403  Proportion DM:0.1274","CERRITOS  Average score:92.5948670944088  Proportion DM:0.0948","CLAREMONT  Average score:94.2954545454545  Proportion DM:0.092","COMPTON  Average score:94.186974789916  Proportion DM:0.1167","COVINA  Average score:93.9821930646673  Proportion DM:0.1187","CUDAHY  Average score:94.6233521657251  Proportion DM:0.1014","CULVER CITY  Average score:93.4422626025791  Proportion DM:0.0735","DIAMOND BAR  Average score:94.2169884169884  Proportion DM:0.0875","DOWNEY  Average score:94.3428085519922  Proportion DM:0.0997","EAST LOS ANGELES  Average score:95.4925373134328  Proportion DM:0.0934","EL MONTE  Average score:94.3027380211574  Proportion DM:0.1236","GARDENA  Average score:92.3654028436019  Proportion DM:0.0991","GLENDALE  Average score:94.3979273317518  Proportion DM:0.0716","GLENDORA  Average score:94.6977535738598  Proportion DM:0.1045","HACIENDA HEIGHTS  Average score:93.2168284789644  Proportion DM:0.1174","HAWTHORNE  Average score:93.5038103302286  Proportion DM:0.1182","HUNTINGTON PARK  Average score:93.6075991930061  Proportion DM:0.0924","INGLEWOOD  Average score:93.5972321641613  Proportion DM:0.1239","LA MIRADA  Average score:93.7642698295033  Proportion DM:0.0922","LA PUENTE  Average score:93.5933456561922  Proportion DM:0.1197","LA VERNE  Average score:94.5722599418041  Proportion DM:0.0713","LAKEWOOD  Average score:93.8610804851158  Proportion DM:0.0985","LANCASTER  Average score:94.4500240269101  Proportion DM:0.1321","LAWNDALE  Average score:93.2952952952953  Proportion DM:0.098","LONG BEACH  Average score:97.375  Proportion DM:0.1167","LOS ANGELES  Average score:93.8765101673047  Proportion DM:0.1006","LYNWOOD  Average score:94.7312638580931  Proportion DM:0.1195","MANHATTAN BEACH  Average score:93.975670617592  Proportion DM:0.0405","MAYWOOD  Average score:95.6042590949423  Proportion DM:0.0929","MONROVIA  Average score:95.1652694610778  Proportion DM:0.1051","MONTEBELLO  Average score:94.552495697074  Proportion DM:0.1048","MONTEREY PARK  Average score:91.6338028169014  Proportion DM:0.1222","NORWALK  Average score:93.4144108280255  Proportion DM:0.1256","PALMDALE  Average score:95.4221730716063  Proportion DM:0.1217","PARAMOUNT  Average score:95.0317195325543  Proportion DM:0.1288","PASADENA  Average score:94.6235294117647  Proportion DM:0.0823","PICO RIVERA  Average score:94.045045045045  Proportion DM:0.1196","POMONA  Average score:94.2233676975945  Proportion DM:0.1073","RANCHO PALOS VERDES  Average score:92.7545605306799  Proportion DM:0.09","REDONDO BEACH  Average score:93.2342007434944  Proportion DM:0.0599","ROSEMEAD  Average score:94.4911862791806  Proportion DM:0.1037","ROWLAND HEIGHTS  Average score:91.6803044719315  Proportion DM:0.1049","SAN DIMAS  Average score:95.3037272006344  Proportion DM:0.0747","SAN FERNANDO  Average score:93.9954308093995  Proportion DM:0.1114","SAN GABRIEL  Average score:93.5273275537128  Proportion DM:0.1167","SANTA CLARITA  Average score:95.7407249466951  Proportion DM:0.088","SANTA MONICA  Average score:94.2587248322148  Proportion DM:0.0588","SOUTH GATE  Average score:94.9014840543101  Proportion DM:0.107","SOUTH PASADENA  Average score:94.2452830188679  Proportion DM:0.085","TEMPLE CITY  Average score:94.7830101569714  Proportion DM:0.1271","TORRANCE  Average score:92.6698927933294  Proportion DM:0.0792","WALNUT  Average score:94.1763059701493  Proportion DM:0.0812","WEST COVINA  Average score:93.887760857304  Proportion DM:0.1048","WEST HOLLYWOOD  Average score:93.0065023028989  Proportion DM:0.0804","WHITTIER  Average score:94.2031673265264  Proportion DM:0.1291"],"marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"line":{"color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[91.6338028169014,91.6803044719315,92.3603418803419,92.3654028436019,92.5948670944088,92.6698927933294,92.7545605306799,92.9016147202403,93.0065023028989,93.2168284789644,93.2342007434944,93.2952952952953,93.4144108280255,93.4422626025791,93.5038103302286,93.5273275537128,93.5933456561922,93.5972321641613,93.6075991930061,93.7642698295033,93.8578431372549,93.8610804851158,93.8765101673047,93.887760857304,93.9261553120534,93.975670617592,93.9821930646673,93.9954308093995,94.045045045045,94.1763059701493,94.186974789916,94.2031673265264,94.2169884169884,94.2233676975945,94.2452830188679,94.2587248322148,94.2901716068643,94.2954545454545,94.3027380211574,94.3428085519922,94.3979273317518,94.4500240269101,94.4688128772636,94.4911862791806,94.552495697074,94.5722599418041,94.6233521657251,94.6235294117647,94.6681735985534,94.6977535738598,94.7312638580931,94.7830101569714,94.9014840543101,94.9087161366313,94.9094184251158,95.0317195325543,95.1652694610778,95.1699196326062,95.3037272006344,95.4221730716063,95.4925373134328,95.6042590949423,95.7407249466951,97.375],"y":[0.101242127893067,0.10126696566227,0.101630191706354,0.101632894901268,0.101755457853024,0.101795531071771,0.101840754359371,0.101919299908306,0.101975323152397,0.102087663950057,0.102096942938013,0.102129575161022,0.102193197931192,0.102208074303825,0.102240948580093,0.102253509753858,0.102288771776072,0.102290847663218,0.10229638496871,0.102380066917401,0.102430046906717,0.102431776060205,0.10244001746333,0.102446026755717,0.102466534253895,0.102492981693888,0.102496465506131,0.102503536137235,0.102530036418426,0.102600146365289,0.102605844865329,0.102614493729265,0.102621875940819,0.102625283284047,0.10263698883929,0.102644168468861,0.102660965026542,0.102663786784377,0.102667677082225,0.102689079817162,0.102718520221585,0.102746346450346,0.10275638207442,0.102768332302702,0.102801079291398,0.102811635899519,0.102838925613509,0.102839020285327,0.102862865931402,0.102878665381964,0.102896564114927,0.102924203187727,0.10298748324339,0.102991346090668,0.102991721201603,0.103057045471846,0.103128378036239,0.103130861816377,0.103202331992874,0.10326559707891,0.103303180489599,0.103362854060837,0.103435744097285,0.104308653815507],"mode":"lines","type":"scatter","marker":{"color":"rgba(44,160,44,1)","line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"line":{"color":"rgba(44,160,44,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="restaurant-inspection-score-vs-obesity" class="section level3">
+<h3>Restaurant Inspection Score vs Obesity</h3>
+<pre class="r"><code>scatter2</code></pre>
+<div id="htmlwidget-0eab61103c3d5ba34b2d" style="width:700px;height:415.296px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-0eab61103c3d5ba34b2d">{"x":{"visdat":{"17b5f6d1b67f6":["function () ","plotlyVisDat"]},"cur_data":"17b5f6d1b67f6","attrs":{"17b5f6d1b67f6":{"x":{},"y":{},"mode":"markers","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"},"17b5f6d1b67f6.1":{"x":{},"y":{},"mode":"markers","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter","hoverinfo":"text","text":{},"inherit":true},"17b5f6d1b67f6.2":{"x":{},"y":[0.229101304699118,0.243714794201391,0.247933707222668,0.249676992790945,0.253976678362798,0.2516224708293,0.253969825022711,0.244381424192308,0.256518800877498,0.264931021286699,0.234383360341614,0.231389938339968,0.247985261214542,0.24692665257468,0.244928273222166,0.251185077180988,0.239659317284228,0.247219543029445,0.248447369192238,0.259667092119488,0.248056337612797,0.229150692526428,0.248985250349717,0.251911129457547,0.237459399799224,0.240259935859833,0.241272768035866,0.24117160053,0.242801651361471,0.241133673721496,0.250686489500697,0.243746386127448,0.249493640245408,0.238225124696906,0.278037259477662,0.243896957953449,0.252238142329557,0.244864623384529,0.26075733833713,0.256473421795177,0.250493618488703,0.222011313336798,0.239387523445538,0.25898043686326,0.255170163804909,0.251186806851082,0.245541619455572,0.247281795765287,0.232948319906432,0.237628928475189,0.249895325478503,0.22246510357202,0.257824573064118,0.245057454845744,0.240489430624477,0.262089051604683,0.247626831279093,0.253899250151008,0.247495658235111,0.252743112854254,0.23212208280964,0.246822540017217,0.24400674873956,0.235406914466209,0.247084668778459],"mode":"lines","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Average restaurant inspection score vs proportion of obesity by city","yaxis":{"domain":[0,1],"automargin":true,"title":"Proportion Obesity"},"xaxis":{"domain":[0,1],"automargin":true,"title":"Average Inspection Score"},"hovermode":"compare","plot_bgcolor":"#e5ecf6","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[92.3603418803419,93.8578431372549,94.2901716068643,94.4688128772636,94.9094184251158,94.6681735985534,94.9087161366313,93.9261553120534,95.1699196326062,96.0319526627219,92.9016147202403,92.5948670944088,94.2954545454545,94.186974789916,93.9821930646673,94.6233521657251,93.4422626025791,94.2169884169884,94.3428085519922,95.4925373134328,94.3027380211574,92.3654028436019,94.3979273317518,94.6977535738598,93.2168284789644,93.5038103302286,93.6075991930061,93.5972321641613,93.7642698295033,93.5933456561922,94.5722599418041,93.8610804851158,94.4500240269101,93.2952952952953,97.375,93.8765101673047,94.7312638580931,93.975670617592,95.6042590949423,95.1652694610778,94.552495697074,91.6338028169014,93.4144108280255,95.4221730716063,95.0317195325543,94.6235294117647,94.045045045045,94.2233676975945,92.7545605306799,93.2342007434944,94.4911862791806,91.6803044719315,95.3037272006344,93.9954308093995,93.5273275537128,95.7407249466951,94.2587248322148,94.9014840543101,94.2452830188679,94.7830101569714,92.6698927933294,94.1763059701493,93.887760857304,93.0065023028989,94.2031673265264],"y":[0.1358,0.2441,0.057,0.2607,0.2652,0.2578,0.286,0.2469,0.1746,0.1094,0.41,0.2342,0.2753,0.3991,0.2623,0.3199,0.22,0.2552,0.279,0.2778,0.2377,0.277,0.1516,0.3262,0.2631,0.2351,0.2987,0.3211,0.4034,0.3235,0.4459,0.303,0.2909,0.248,0.2422,0.2193,0.3225,0.0857,0.2925,0.1778,0.2713,0.1058,0.3187,0.3054,0.2782,0.2233,0.2969,0.3119,0.2028,0.1971,0.1508,0.1848,0.3382,0.2813,0.0842,0.2528,0.13,0.2791,0.1306,0.0996,0.1695,0.193,0.2751,0.2207,0.2773],"mode":"markers","type":"scatter","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[92.3603418803419,93.8578431372549,94.2901716068643,94.4688128772636,94.9094184251158,94.6681735985534,94.9087161366313,93.9261553120534,95.1699196326062,96.0319526627219,92.9016147202403,92.5948670944088,94.2954545454545,94.186974789916,93.9821930646673,94.6233521657251,93.4422626025791,94.2169884169884,94.3428085519922,95.4925373134328,94.3027380211574,92.3654028436019,94.3979273317518,94.6977535738598,93.2168284789644,93.5038103302286,93.6075991930061,93.5972321641613,93.7642698295033,93.5933456561922,94.5722599418041,93.8610804851158,94.4500240269101,93.2952952952953,97.375,93.8765101673047,94.7312638580931,93.975670617592,95.6042590949423,95.1652694610778,94.552495697074,91.6338028169014,93.4144108280255,95.4221730716063,95.0317195325543,94.6235294117647,94.045045045045,94.2233676975945,92.7545605306799,93.2342007434944,94.4911862791806,91.6803044719315,95.3037272006344,93.9954308093995,93.5273275537128,95.7407249466951,94.2587248322148,94.9014840543101,94.2452830188679,94.7830101569714,92.6698927933294,94.1763059701493,93.887760857304,93.0065023028989,94.2031673265264],"y":[0.1358,0.2441,0.057,0.2607,0.2652,0.2578,0.286,0.2469,0.1746,0.1094,0.41,0.2342,0.2753,0.3991,0.2623,0.3199,0.22,0.2552,0.279,0.2778,0.2377,0.277,0.1516,0.3262,0.2631,0.2351,0.2987,0.3211,0.4034,0.3235,0.4459,0.303,0.2909,0.248,0.2422,0.2193,0.3225,0.0857,0.2925,0.1778,0.2713,0.1058,0.3187,0.3054,0.2782,0.2233,0.2969,0.3119,0.2028,0.1971,0.1508,0.1848,0.3382,0.2813,0.0842,0.2528,0.13,0.2791,0.1306,0.0996,0.1695,0.193,0.2751,0.2207,0.2773],"mode":"markers","type":"scatter","hoverinfo":["text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text"],"text":["ALHAMBRA  Average score:92.3603418803419  Proportion Obese:0.1358","ALTADENA  Average score:93.8578431372549  Proportion Obese:0.2441","ARCADIA  Average score:94.2901716068643  Proportion Obese:0.057","AZUSA  Average score:94.4688128772636  Proportion Obese:0.2607","BALDWIN PARK  Average score:94.9094184251158  Proportion Obese:0.2652","BELL  Average score:94.6681735985534  Proportion Obese:0.2578","BELL GARDENS  Average score:94.9087161366313  Proportion Obese:0.286","BELLFLOWER  Average score:93.9261553120534  Proportion Obese:0.2469","BURBANK  Average score:95.1699196326062  Proportion Obese:0.1746","CALABASAS  Average score:96.0319526627219  Proportion Obese:0.1094","CARSON  Average score:92.9016147202403  Proportion Obese:0.41","CERRITOS  Average score:92.5948670944088  Proportion Obese:0.2342","CLAREMONT  Average score:94.2954545454545  Proportion Obese:0.2753","COMPTON  Average score:94.186974789916  Proportion Obese:0.3991","COVINA  Average score:93.9821930646673  Proportion Obese:0.2623","CUDAHY  Average score:94.6233521657251  Proportion Obese:0.3199","CULVER CITY  Average score:93.4422626025791  Proportion Obese:0.22","DIAMOND BAR  Average score:94.2169884169884  Proportion Obese:0.2552","DOWNEY  Average score:94.3428085519922  Proportion Obese:0.279","EAST LOS ANGELES  Average score:95.4925373134328  Proportion Obese:0.2778","EL MONTE  Average score:94.3027380211574  Proportion Obese:0.2377","GARDENA  Average score:92.3654028436019  Proportion Obese:0.277","GLENDALE  Average score:94.3979273317518  Proportion Obese:0.1516","GLENDORA  Average score:94.6977535738598  Proportion Obese:0.3262","HACIENDA HEIGHTS  Average score:93.2168284789644  Proportion Obese:0.2631","HAWTHORNE  Average score:93.5038103302286  Proportion Obese:0.2351","HUNTINGTON PARK  Average score:93.6075991930061  Proportion Obese:0.2987","INGLEWOOD  Average score:93.5972321641613  Proportion Obese:0.3211","LA MIRADA  Average score:93.7642698295033  Proportion Obese:0.4034","LA PUENTE  Average score:93.5933456561922  Proportion Obese:0.3235","LA VERNE  Average score:94.5722599418041  Proportion Obese:0.4459","LAKEWOOD  Average score:93.8610804851158  Proportion Obese:0.303","LANCASTER  Average score:94.4500240269101  Proportion Obese:0.2909","LAWNDALE  Average score:93.2952952952953  Proportion Obese:0.248","LONG BEACH  Average score:97.375  Proportion Obese:0.2422","LOS ANGELES  Average score:93.8765101673047  Proportion Obese:0.2193","LYNWOOD  Average score:94.7312638580931  Proportion Obese:0.3225","MANHATTAN BEACH  Average score:93.975670617592  Proportion Obese:0.0857","MAYWOOD  Average score:95.6042590949423  Proportion Obese:0.2925","MONROVIA  Average score:95.1652694610778  Proportion Obese:0.1778","MONTEBELLO  Average score:94.552495697074  Proportion Obese:0.2713","MONTEREY PARK  Average score:91.6338028169014  Proportion Obese:0.1058","NORWALK  Average score:93.4144108280255  Proportion Obese:0.3187","PALMDALE  Average score:95.4221730716063  Proportion Obese:0.3054","PARAMOUNT  Average score:95.0317195325543  Proportion Obese:0.2782","PASADENA  Average score:94.6235294117647  Proportion Obese:0.2233","PICO RIVERA  Average score:94.045045045045  Proportion Obese:0.2969","POMONA  Average score:94.2233676975945  Proportion Obese:0.3119","RANCHO PALOS VERDES  Average score:92.7545605306799  Proportion Obese:0.2028","REDONDO BEACH  Average score:93.2342007434944  Proportion Obese:0.1971","ROSEMEAD  Average score:94.4911862791806  Proportion Obese:0.1508","ROWLAND HEIGHTS  Average score:91.6803044719315  Proportion Obese:0.1848","SAN DIMAS  Average score:95.3037272006344  Proportion Obese:0.3382","SAN FERNANDO  Average score:93.9954308093995  Proportion Obese:0.2813","SAN GABRIEL  Average score:93.5273275537128  Proportion Obese:0.0842","SANTA CLARITA  Average score:95.7407249466951  Proportion Obese:0.2528","SANTA MONICA  Average score:94.2587248322148  Proportion Obese:0.13","SOUTH GATE  Average score:94.9014840543101  Proportion Obese:0.2791","SOUTH PASADENA  Average score:94.2452830188679  Proportion Obese:0.1306","TEMPLE CITY  Average score:94.7830101569714  Proportion Obese:0.0996","TORRANCE  Average score:92.6698927933294  Proportion Obese:0.1695","WALNUT  Average score:94.1763059701493  Proportion Obese:0.193","WEST COVINA  Average score:93.887760857304  Proportion Obese:0.2751","WEST HOLLYWOOD  Average score:93.0065023028989  Proportion Obese:0.2207","WHITTIER  Average score:94.2031673265264  Proportion Obese:0.2773"],"marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"line":{"color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[91.6338028169014,91.6803044719315,92.3603418803419,92.3654028436019,92.5948670944088,92.6698927933294,92.7545605306799,92.9016147202403,93.0065023028989,93.2168284789644,93.2342007434944,93.2952952952953,93.4144108280255,93.4422626025791,93.5038103302286,93.5273275537128,93.5933456561922,93.5972321641613,93.6075991930061,93.7642698295033,93.8578431372549,93.8610804851158,93.8765101673047,93.887760857304,93.9261553120534,93.975670617592,93.9821930646673,93.9954308093995,94.045045045045,94.1763059701493,94.186974789916,94.2031673265264,94.2169884169884,94.2233676975945,94.2452830188679,94.2587248322148,94.2901716068643,94.2954545454545,94.3027380211574,94.3428085519922,94.3979273317518,94.4500240269101,94.4688128772636,94.4911862791806,94.552495697074,94.5722599418041,94.6233521657251,94.6235294117647,94.6681735985534,94.6977535738598,94.7312638580931,94.7830101569714,94.9014840543101,94.9087161366313,94.9094184251158,95.0317195325543,95.1652694610778,95.1699196326062,95.3037272006344,95.4221730716063,95.4925373134328,95.6042590949423,95.7407249466951,96.0319526627219,97.375],"y":[0.222011313336798,0.22246510357202,0.229101304699118,0.229150692526428,0.231389938339968,0.23212208280964,0.232948319906432,0.234383360341614,0.235406914466209,0.237459399799224,0.237628928475189,0.238225124696906,0.239387523445538,0.239659317284228,0.240259935859833,0.240489430624477,0.241133673721496,0.24117160053,0.241272768035866,0.242801651361471,0.243714794201391,0.243746386127448,0.243896957953449,0.24400674873956,0.244381424192308,0.244864623384529,0.244928273222166,0.245057454845744,0.245541619455572,0.246822540017217,0.24692665257468,0.247084668778459,0.247219543029445,0.247281795765287,0.247495658235111,0.247626831279093,0.247933707222668,0.247985261214542,0.248056337612797,0.248447369192238,0.248985250349717,0.249493640245408,0.249676992790945,0.249895325478503,0.250493618488703,0.250686489500697,0.251185077180988,0.251186806851082,0.2516224708293,0.251911129457547,0.252238142329557,0.252743112854254,0.253899250151008,0.253969825022711,0.253976678362798,0.255170163804909,0.256473421795177,0.256518800877498,0.257824573064118,0.25898043686326,0.259667092119488,0.26075733833713,0.262089051604683,0.264931021286699,0.278037259477662],"mode":"lines","type":"scatter","marker":{"color":"rgba(44,160,44,1)","line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"line":{"color":"rgba(44,160,44,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="restaurant-inspection-score-vs-depression"
+class="section level3">
+<h3>Restaurant Inspection Score vs Depression</h3>
+<pre class="r"><code>scatter3</code></pre>
+<div id="htmlwidget-af524fecc61cf6dd3e97" style="width:700px;height:415.296px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-af524fecc61cf6dd3e97">{"x":{"visdat":{"17b5f22467f70":["function () ","plotlyVisDat"]},"cur_data":"17b5f22467f70","attrs":{"17b5f22467f70":{"x":{},"y":{},"mode":"markers","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter"},"17b5f22467f70.1":{"x":{},"y":{},"mode":"markers","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter","hoverinfo":"text","text":{},"inherit":true},"17b5f22467f70.2":{"x":{},"y":[0.0681464655103301,0.0797480508742453,0.0830974274589192,0.0844814142425619,0.087894915801659,0.0860259207433597,0.0878894749649551,0.0802772855067108,0.0771786203748864,0.0899130957411757,0.0965915207102595,0.0723398663694352,0.0699634017422207,0.083138355947456,0.0822979311809807,0.0807114265583802,0.0856786758400983,0.0765284254973948,0.0825304556312636,0.0835052214486595,0.092412510380556,0.0831947831889845,0.0681856742902979,0.0839322429456921,0.0862550855650891,0.0747819206333873,0.0770052539561251,0.0778093369882945,0.0777290205481197,0.079023110769753,0.0776989106208242,0.085282849262648,0.0797731315660892,0.0843358514590524,0.0753898262786714,0.1069965058542,0.0798926698798143,0.0865146996530958,0.0806608952308264,0.093278052081578,0.0898770694863101,0.0851297298102731,0.06251775239519,0.0763126495582901,0.0918673777775955,0.0888424186711882,0.0856800490176166,0.0811983594489388,0.0825798778058162,0.0712005940480061,0.07491650870734,0.0846547476077413,0.0628780144770443,0.0909497425657783,0.0808139832840105,0.0771874488454544,0.0943352934168093,0.0828537999902731,0.087833445883162,0.082749662284699,0.0869155935427879,0.0705446480326637,0.0822152766772303,0.0799798323044384,0.073152461509647,0.0824233795536458],"mode":"lines","alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"type":"scatter","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"title":"Average restaurant inspection score vs proportion with depression by city","yaxis":{"domain":[0,1],"automargin":true,"title":"Proportion Depression"},"xaxis":{"domain":[0,1],"automargin":true,"title":"Average Inspection Score"},"hovermode":"compare","plot_bgcolor":"#e5ecf6","showlegend":false},"source":"A","config":{"modeBarButtonsToAdd":["hoverclosest","hovercompare"],"showSendToCloud":false},"data":[{"x":[92.3603418803419,93.8578431372549,94.2901716068643,94.4688128772636,94.9094184251158,94.6681735985534,94.9087161366313,93.9261553120534,93.5261879986126,95.1699196326062,96.0319526627219,92.9016147202403,92.5948670944088,94.2954545454545,94.186974789916,93.9821930646673,94.6233521657251,93.4422626025791,94.2169884169884,94.3428085519922,95.4925373134328,94.3027380211574,92.3654028436019,94.3979273317518,94.6977535738598,93.2168284789644,93.5038103302286,93.6075991930061,93.5972321641613,93.7642698295033,93.5933456561922,94.5722599418041,93.8610804851158,94.4500240269101,93.2952952952953,97.375,93.8765101673047,94.7312638580931,93.975670617592,95.6042590949423,95.1652694610778,94.552495697074,91.6338028169014,93.4144108280255,95.4221730716063,95.0317195325543,94.6235294117647,94.045045045045,94.2233676975945,92.7545605306799,93.2342007434944,94.4911862791806,91.6803044719315,95.3037272006344,93.9954308093995,93.5273275537128,95.7407249466951,94.2587248322148,94.9014840543101,94.2452830188679,94.7830101569714,92.6698927933294,94.1763059701493,93.887760857304,93.0065023028989,94.2031673265264],"y":[0.0523,0.1099,0.0493,0.0895,0.0544,0.0755,0.0983,0.0631,0.1924,0.099,0.1412,0.057,0.041,0.1043,0.0594,0.0716,0.1121,0.1076,0.0463,0.0546,0.0764,0.0473,0.0584,0.098,0.106,0.0492,0.0793,0.0855,0.0746,0.0764,0.0592,0.1003,0.0625,0.1271,0.0691,0.0884,0.0925,0.062,0.1697,0.072,0.0966,0.0506,0.0442,0.0603,0.0964,0.073,0.1247,0.0694,0.0699,0.0831,0.1129,0.0519,0.0422,0.0946,0.0808,0.0562,0.1126,0.1488,0.06,0.0857,0.0518,0.0625,0.0551,0.0558,0.1503,0.0756],"mode":"markers","type":"scatter","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[92.3603418803419,93.8578431372549,94.2901716068643,94.4688128772636,94.9094184251158,94.6681735985534,94.9087161366313,93.9261553120534,93.5261879986126,95.1699196326062,96.0319526627219,92.9016147202403,92.5948670944088,94.2954545454545,94.186974789916,93.9821930646673,94.6233521657251,93.4422626025791,94.2169884169884,94.3428085519922,95.4925373134328,94.3027380211574,92.3654028436019,94.3979273317518,94.6977535738598,93.2168284789644,93.5038103302286,93.6075991930061,93.5972321641613,93.7642698295033,93.5933456561922,94.5722599418041,93.8610804851158,94.4500240269101,93.2952952952953,97.375,93.8765101673047,94.7312638580931,93.975670617592,95.6042590949423,95.1652694610778,94.552495697074,91.6338028169014,93.4144108280255,95.4221730716063,95.0317195325543,94.6235294117647,94.045045045045,94.2233676975945,92.7545605306799,93.2342007434944,94.4911862791806,91.6803044719315,95.3037272006344,93.9954308093995,93.5273275537128,95.7407249466951,94.2587248322148,94.9014840543101,94.2452830188679,94.7830101569714,92.6698927933294,94.1763059701493,93.887760857304,93.0065023028989,94.2031673265264],"y":[0.0523,0.1099,0.0493,0.0895,0.0544,0.0755,0.0983,0.0631,0.1924,0.099,0.1412,0.057,0.041,0.1043,0.0594,0.0716,0.1121,0.1076,0.0463,0.0546,0.0764,0.0473,0.0584,0.098,0.106,0.0492,0.0793,0.0855,0.0746,0.0764,0.0592,0.1003,0.0625,0.1271,0.0691,0.0884,0.0925,0.062,0.1697,0.072,0.0966,0.0506,0.0442,0.0603,0.0964,0.073,0.1247,0.0694,0.0699,0.0831,0.1129,0.0519,0.0422,0.0946,0.0808,0.0562,0.1126,0.1488,0.06,0.0857,0.0518,0.0625,0.0551,0.0558,0.1503,0.0756],"mode":"markers","type":"scatter","hoverinfo":["text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text","text"],"text":["ALHAMBRA  Average score:92.3603418803419  Proportion with depression:0.0523","ALTADENA  Average score:93.8578431372549  Proportion with depression:0.1099","ARCADIA  Average score:94.2901716068643  Proportion with depression:0.0493","AZUSA  Average score:94.4688128772636  Proportion with depression:0.0895","BALDWIN PARK  Average score:94.9094184251158  Proportion with depression:0.0544","BELL  Average score:94.6681735985534  Proportion with depression:0.0755","BELL GARDENS  Average score:94.9087161366313  Proportion with depression:0.0983","BELLFLOWER  Average score:93.9261553120534  Proportion with depression:0.0631","BEVERLY HILLS  Average score:93.5261879986126  Proportion with depression:0.1924","BURBANK  Average score:95.1699196326062  Proportion with depression:0.099","CALABASAS  Average score:96.0319526627219  Proportion with depression:0.1412","CARSON  Average score:92.9016147202403  Proportion with depression:0.057","CERRITOS  Average score:92.5948670944088  Proportion with depression:0.041","CLAREMONT  Average score:94.2954545454545  Proportion with depression:0.1043","COMPTON  Average score:94.186974789916  Proportion with depression:0.0594","COVINA  Average score:93.9821930646673  Proportion with depression:0.0716","CUDAHY  Average score:94.6233521657251  Proportion with depression:0.1121","CULVER CITY  Average score:93.4422626025791  Proportion with depression:0.1076","DIAMOND BAR  Average score:94.2169884169884  Proportion with depression:0.0463","DOWNEY  Average score:94.3428085519922  Proportion with depression:0.0546","EAST LOS ANGELES  Average score:95.4925373134328  Proportion with depression:0.0764","EL MONTE  Average score:94.3027380211574  Proportion with depression:0.0473","GARDENA  Average score:92.3654028436019  Proportion with depression:0.0584","GLENDALE  Average score:94.3979273317518  Proportion with depression:0.098","GLENDORA  Average score:94.6977535738598  Proportion with depression:0.106","HACIENDA HEIGHTS  Average score:93.2168284789644  Proportion with depression:0.0492","HAWTHORNE  Average score:93.5038103302286  Proportion with depression:0.0793","HUNTINGTON PARK  Average score:93.6075991930061  Proportion with depression:0.0855","INGLEWOOD  Average score:93.5972321641613  Proportion with depression:0.0746","LA MIRADA  Average score:93.7642698295033  Proportion with depression:0.0764","LA PUENTE  Average score:93.5933456561922  Proportion with depression:0.0592","LA VERNE  Average score:94.5722599418041  Proportion with depression:0.1003","LAKEWOOD  Average score:93.8610804851158  Proportion with depression:0.0625","LANCASTER  Average score:94.4500240269101  Proportion with depression:0.1271","LAWNDALE  Average score:93.2952952952953  Proportion with depression:0.0691","LONG BEACH  Average score:97.375  Proportion with depression:0.0884","LOS ANGELES  Average score:93.8765101673047  Proportion with depression:0.0925","LYNWOOD  Average score:94.7312638580931  Proportion with depression:0.062","MANHATTAN BEACH  Average score:93.975670617592  Proportion with depression:0.1697","MAYWOOD  Average score:95.6042590949423  Proportion with depression:0.072","MONROVIA  Average score:95.1652694610778  Proportion with depression:0.0966","MONTEBELLO  Average score:94.552495697074  Proportion with depression:0.0506","MONTEREY PARK  Average score:91.6338028169014  Proportion with depression:0.0442","NORWALK  Average score:93.4144108280255  Proportion with depression:0.0603","PALMDALE  Average score:95.4221730716063  Proportion with depression:0.0964","PARAMOUNT  Average score:95.0317195325543  Proportion with depression:0.073","PASADENA  Average score:94.6235294117647  Proportion with depression:0.1247","PICO RIVERA  Average score:94.045045045045  Proportion with depression:0.0694","POMONA  Average score:94.2233676975945  Proportion with depression:0.0699","RANCHO PALOS VERDES  Average score:92.7545605306799  Proportion with depression:0.0831","REDONDO BEACH  Average score:93.2342007434944  Proportion with depression:0.1129","ROSEMEAD  Average score:94.4911862791806  Proportion with depression:0.0519","ROWLAND HEIGHTS  Average score:91.6803044719315  Proportion with depression:0.0422","SAN DIMAS  Average score:95.3037272006344  Proportion with depression:0.0946","SAN FERNANDO  Average score:93.9954308093995  Proportion with depression:0.0808","SAN GABRIEL  Average score:93.5273275537128  Proportion with depression:0.0562","SANTA CLARITA  Average score:95.7407249466951  Proportion with depression:0.1126","SANTA MONICA  Average score:94.2587248322148  Proportion with depression:0.1488","SOUTH GATE  Average score:94.9014840543101  Proportion with depression:0.06","SOUTH PASADENA  Average score:94.2452830188679  Proportion with depression:0.0857","TEMPLE CITY  Average score:94.7830101569714  Proportion with depression:0.0518","TORRANCE  Average score:92.6698927933294  Proportion with depression:0.0625","WALNUT  Average score:94.1763059701493  Proportion with depression:0.0551","WEST COVINA  Average score:93.887760857304  Proportion with depression:0.0558","WEST HOLLYWOOD  Average score:93.0065023028989  Proportion with depression:0.1503","WHITTIER  Average score:94.2031673265264  Proportion with depression:0.0756"],"marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"line":{"color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":[91.6338028169014,91.6803044719315,92.3603418803419,92.3654028436019,92.5948670944088,92.6698927933294,92.7545605306799,92.9016147202403,93.0065023028989,93.2168284789644,93.2342007434944,93.2952952952953,93.4144108280255,93.4422626025791,93.5038103302286,93.5261879986126,93.5273275537128,93.5933456561922,93.5972321641613,93.6075991930061,93.7642698295033,93.8578431372549,93.8610804851158,93.8765101673047,93.887760857304,93.9261553120534,93.975670617592,93.9821930646673,93.9954308093995,94.045045045045,94.1763059701493,94.186974789916,94.2031673265264,94.2169884169884,94.2233676975945,94.2452830188679,94.2587248322148,94.2901716068643,94.2954545454545,94.3027380211574,94.3428085519922,94.3979273317518,94.4500240269101,94.4688128772636,94.4911862791806,94.552495697074,94.5722599418041,94.6233521657251,94.6235294117647,94.6681735985534,94.6977535738598,94.7312638580931,94.7830101569714,94.9014840543101,94.9087161366313,94.9094184251158,95.0317195325543,95.1652694610778,95.1699196326062,95.3037272006344,95.4221730716063,95.4925373134328,95.6042590949423,95.7407249466951,96.0319526627219,97.375],"y":[0.06251775239519,0.0628780144770443,0.0681464655103301,0.0681856742902979,0.0699634017422207,0.0705446480326637,0.0712005940480061,0.0723398663694352,0.073152461509647,0.0747819206333873,0.07491650870734,0.0753898262786714,0.0763126495582901,0.0765284254973948,0.0770052539561251,0.0771786203748864,0.0771874488454544,0.0776989106208242,0.0777290205481197,0.0778093369882945,0.079023110769753,0.0797480508742453,0.0797731315660892,0.0798926698798143,0.0799798323044384,0.0802772855067108,0.0806608952308264,0.0807114265583802,0.0808139832840105,0.0811983594489388,0.0822152766772303,0.0822979311809807,0.0824233795536458,0.0825304556312636,0.0825798778058162,0.082749662284699,0.0828537999902731,0.0830974274589192,0.083138355947456,0.0831947831889845,0.0835052214486595,0.0839322429456921,0.0843358514590524,0.0844814142425619,0.0846547476077413,0.0851297298102731,0.085282849262648,0.0856786758400983,0.0856800490176166,0.0860259207433597,0.0862550855650891,0.0865146996530958,0.0869155935427879,0.087833445883162,0.0878894749649551,0.087894915801659,0.0888424186711882,0.0898770694863101,0.0899130957411757,0.0909497425657783,0.0918673777775955,0.092412510380556,0.093278052081578,0.0943352934168093,0.0965915207102595,0.1069965058542],"mode":"lines","type":"scatter","marker":{"color":"rgba(44,160,44,1)","line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"line":{"color":"rgba(44,160,44,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+</div>
+<div id="map-of-chain-restaurants" class="section level3">
+<h3>Map of chain restaurants</h3>
+</div>
+</div>
+<div id="section" class="section level2 unnumbered">
+<h2 class="unnumbered"></h2>
+</div>
+
+<p> Copyright &copy 2022. Victoria Yin. </p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
