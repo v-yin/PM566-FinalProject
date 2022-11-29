@@ -7,6 +7,7 @@ output:
         toc_float: TRUE
         code_folding: hide
 ---
+
 ```{r setup, message=FALSE, echo=FALSE, warning=FALSE}
 # Initialize code chunk options
 if(!require(data.table)) install.packages("data.table")
@@ -214,6 +215,16 @@ DMmap <- leaflet(lamap) %>% addTiles() %>%
             title = "Inspection Score",
             opacity = 1)
 
+scoremap <- leaflet(chains) %>%
+  addProviderTiles("CartoDB.Positron") %>%
+  addCircles(
+    lat = ~latitude, lng = ~longitude,
+    label = ~paste0(paste(FACILITY_NAME), ", ", paste0(round(avgscore, 2))), color = ~score.pal(avgscore),
+    opacity = 1, fillOpacity = 1, radius = 200
+  ) %>%
+  addLegend("bottomright", pal=score.pal, values = chains$avgscore, title= "Inspection Score", opacity=1) %>%
+  addControl("Average Inspection Scores by Chain Restaurant", position = "bottomleft")
+
 ```
 
 ## Showcasing scatterplots {.tabset}
@@ -234,6 +245,13 @@ scatter2
 scatter3
 ```
 ## {-}
+
+## Map of chain restaurant scores
+
+```{r echo=TRUE}
+scoremap
+```
+
 
 ## Chain restaurant inspection scores with heat map of proportion with diabetes
 This has a HUGE amount of data, so I do not expect it to load
