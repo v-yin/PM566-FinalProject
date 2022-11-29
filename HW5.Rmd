@@ -1,5 +1,5 @@
 ---
-title: "HW5, Interactive Visualization"
+title: "Additional maps"
 author: "VY"
 output: 
     html_document:
@@ -150,41 +150,7 @@ chains <- unique(chains, by = "FACILITY_ID")
 
 
 
-```{r plotly, echo=FALSE}
-fit1 <- lm(Prop_DM ~ mean_score, data = citysum)
-scatter1 <- citysum %>% filter(!is.na(Prop_DM)) %>%
-  plot_ly(x = ~mean_score, y = ~Prop_DM,
-          type = 'scatter', mode = 'markers', marker = list(size = 5, color = colorRampPalette(brewer.pal(10,"Spectral"))(66))) %>%
-          add_markers( hoverinfo = 'text',
-          text = ~paste(paste(FACILITY_CITY),  paste0(" Average score:",
-                        round(mean_score, 2), sep=""), paste(" Proportion DM:",
-                        Prop_DM, sep=""))) %>%
-  add_lines(x = ~mean_score, y=fitted(fit1)) %>%
-  layout(title = "Average restaurant inspection score vs proportion of diabetes by city", yaxis = list(title = "Proportion Diabetes", hoverformat='.2f'), xaxis = list(title = "Average Inspection Score", hoverformat = '.2f'), hovermode = "compare") %>%
-  layout(showlegend = F)
-
-fit2 <- lm(Prop_obse ~ mean_score, data = citysum)
-scatter2 <- citysum %>% filter(!is.na(Prop_obse)) %>%
-  plot_ly(x = ~mean_score, y = ~Prop_obse,
-          type = 'scatter', mode = 'markers', marker = list(size = 5, color = colorRampPalette(brewer.pal(10,"Paired"))(66))) %>%
-          add_markers( hoverinfo = 'text',
-          text = ~paste(paste(FACILITY_CITY),  paste0(" Average score:",
-                        round(mean_score, 2), sep=""), paste(" Proportion Obese:",
-                        Prop_obse, sep=""))) %>%
-  add_lines(x = ~mean_score, y=fitted(fit2)) %>%
-  layout(title = "Average restaurant inspection score vs proportion of obesity by city", yaxis = list(title = "Proportion Obesity"), xaxis = list(title = "Average Inspection Score"), hovermode = "compare") %>%
-  layout(showlegend = F)
-
-fit3 <- lm(Prop_depr ~ mean_score, data = citysum)
-scatter3 <- citysum %>% filter(!is.na(Prop_depr)) %>%
-  plot_ly(x = ~mean_score, y = ~Prop_depr,
-          type = 'scatter', mode = 'markers', marker = list(size = 5, color = colorRampPalette(brewer.pal(10,"Pastel2"))(66))) %>%
-          add_markers( hoverinfo = 'text',
-          text = ~paste(paste(FACILITY_CITY),  paste0(" Average score:",
-                        round(mean_score, 2), sep=""), paste(" Proportion with depression:",Prop_depr, sep=""))) %>%
-  add_lines(x = ~mean_score, y=fitted(fit3)) %>%
-  layout(title = "Average restaurant inspection score vs proportion with depression by city", yaxis = list(title = "Proportion Depression"), xaxis = list(title = "Average Inspection Score"), hovermode = "compare") %>%
-  layout(showlegend = F)
+```{r mapping, echo=FALSE}
 
 zips <- unique(chains$FACILITY_ZIP)
 
@@ -197,23 +163,8 @@ lamap <- zctas(
 chains$FACILITY_ZIP <- as.character(chains$FACILITY_ZIP)
 chains <- lamap %>% left_join(chains, by = c("GEOID10" = "FACILITY_ZIP"))
 
-score.pal <- colorNumeric("Blues", domain=chains$avgscore)
-DM.pal <- colorNumeric("Greens", domain=chains$Prop_DM)
-DMmap <- leaflet(lamap) %>% addTiles() %>%
-  addPolygons(data=chains,
-              color = ~DM.pal(Prop_DM)) %>%
-  addCircles(
-    lat = ~chains$latitude, lng = ~chains$longitude,
-    label = ~paste0(chains$avgscore), color = ~score.pal(chains$avgscore),
-    opacity = 1, fillOpacity = 1, radius = 200
-  ) %>%
-    addLegend("bottomright", pal = DM.pal, values = ~chains$Prop_DM,
-    title = "Proportion Diabetes",
-    opacity = 1
-  ) %>%
-  addLegend("bottomleft", pal = score.pal, values = ~chains$avgscore,
-            title = "Inspection Score",
-            opacity = 1)
+score.pal <- colorNumeric("magma", domain=chains$avgscore)
+
 
 scoremap <- leaflet(chains) %>%
   addProviderTiles("CartoDB.Positron") %>%
@@ -225,39 +176,14 @@ scoremap <- leaflet(chains) %>%
   addLegend("bottomright", pal=score.pal, values = chains$avgscore, title= "Inspection Score", opacity=1) %>%
   addControl("Average Inspection Scores by Chain Restaurant", position = "bottomleft")
 
-mapview(lamap)
 ```
 
-## Showcasing scatterplots {.tabset}
 
-### Restaurant Inspection Score vs Diabetes
-
-```{r echo=FALSE, fig.show='asis'}
-scatter1
-```
-
-### Restaurant Inspection Score vs Obesity
-```{r echo=TRUE}
-scatter2
-```
-
-### Restaurant Inspection Score vs Depression
-```{r echo=TRUE}
-scatter3
-```
-## {-}
 
 ## Map of chain restaurant scores
 
 ```{r echo=TRUE}
 scoremap
-```
-
-
-## Chain restaurant inspection scores with heat map of proportion with diabetes
-This has a HUGE amount of data, so I do not expect it to load
-```{r echo=TRUE}
-DMmap
 ```
 
 
