@@ -214,9 +214,12 @@ DMmap <- leaflet(lamap) %>% addTiles() %>%
             opacity = 1)
 
 ```
+## Chain restaurant inspection scores with heat map of proportion with diabetes
+```{r echo=TRUE}
+DMmap
+```
 
-
-## Showcasing plots {.tabset}
+## Showcasing scatterplots {.tabset}
 
 ### Restaurant Inspection Score vs Diabetes
 
@@ -234,10 +237,7 @@ scatter2
 scatter3
 ```
 
-### Map of chain restaurants with heat map of proportion with diabetes
-```{r echo=TRUE}
-DMmap
-```
+
 
 
 ## {-}
