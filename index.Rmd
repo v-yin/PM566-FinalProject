@@ -218,15 +218,22 @@ scatter3 <- citysum %>% filter(!is.na(Prop_depr)) %>%
 scatter1
 ```
 
+There does not appear to be a significant linear correlation between a city's average restaurant inspection score and proportion of its population with diabetes.
+
 ### Restaurant Inspection Score vs Obesity
 ```{r echo=TRUE}
 scatter2
 ```
 
+There may be a weak positive correlation between a city's average inspection score and the proportion of its population with obesity.
+
 ### Restaurant Inspection Score vs Depression
 ```{r echo=TRUE}
 scatter3
 ```
+
+There appears to be a stronger positive correlation between a city's average inspection score and the proportion of its population with depression. Interestingly, Beverly Hills is a significant outlier here!
+
 ## {-}
 
 
