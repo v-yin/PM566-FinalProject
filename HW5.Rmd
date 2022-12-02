@@ -237,6 +237,7 @@ Depmap <- leaflet(lamap) %>% addTiles() %>%
 ```{r echo=TRUE}
 scoremap
 ```
+<br>
 
 ## Map of chain restaurant scores with heat map of diabetes proportion
 
@@ -244,11 +245,17 @@ scoremap
 DMmap
 ```
 
+
+<br>
+
 ## Map of chain restaurant scores with heat map of obesity proportion
 
 ```{r}
 Obmap
 ```
+
+
+<br>
 
 ## Map of chain restaurant scores with heat map of proportion depressed
 
