@@ -1,2 +1,5 @@
-# Reading in data for PM566 Final Project
+# Data used for PM566 Project: Restaurant Inspection Scores and Community Health Status
 
+I used 2 data sets which I merged together for this project. Both are available at data.lacounty.gov to download as CSV (and in my this folder, LACinspections.csv and LAChealth.csv). The first is a dataset of all LA County restaurant inspections over the past 5 years. I added LA County community health data from 2018 to see if there were any relationships between public health outcomes and local restaurant hygiene. These datasets were merged by city name. City names were briefly inspected to ensure matching would be feasible. As Los Angeles had many sub-cities for which there was health data, I only included the "City of Los Angeles" data to represent the local public health for any restaurant with city listed as Los Angeles. Only restaurants in cities with health data were included in this analysis.
+
+In addition, I used the package "tidygeocoder" to retrieve latitude and longitude data from the restaurant addresses of the subset of chain restaurants I chose to study. The data set used for that analysis can be found [here.](https://github.com/v-yin/PM566-FinalProject/blob/main/data/chains.csv) This step took hours to perform, so the data set is uploaded to GitHub for your convenience.
