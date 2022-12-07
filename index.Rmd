@@ -8,7 +8,11 @@ output:
         code_folding: hide
 ---
 
-PM566 Final Project
+LA County Restaurant Inspection Scores and Community Health
+
+<br>
+
+## Download full report here: 
 
 <br>
 
@@ -71,7 +75,7 @@ opts_chunk$set(
 # Read in and clean data
 if (!file.exists("LACinspections.csv.zip"))
   download(
-    url = "https://github.com/v-yin/PM566-Midterm/blob/main/LACinspections.csv.zip?raw=true",
+    url = "https://github.com/v-yin/PM566-FinalProject/raw/main/data/LACinspections.csv.zip",
     dest = "LACinspections.csv.zip",
     mode="wb"
     )
@@ -80,7 +84,7 @@ inspect <- read.csv("LACinspections.csv")
 
 if (!file.exists("LAChealth.csv"))
   download(
-    url = "https://raw.githubusercontent.com/v-yin/PM566-Midterm/main/LAChealth.csv",
+    url = "https://raw.githubusercontent.com/v-yin/PM566-FinalProject/main/data/LAChealth.csv",
     dest = "LAChealth.csv",
     mode="wb"
     )
@@ -129,7 +133,7 @@ resthealth$fulladdress <- paste0(resthealth$FACILITY_ADDRESS, ", ", resthealth$F
 
 if (!file.exists("chains.csv"))
   download(
-    url = "https://github.com/v-yin/PM566-FinalProject/blob/main/chains.csv?raw=true",
+    url = "https://github.com/v-yin/PM566-FinalProject/blob/main/data/chains.csv?raw=true",
     dest = "chains.csv",
     mode="wb"
     )
