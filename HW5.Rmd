@@ -239,6 +239,8 @@ Depmap <- leaflet(lamap) %>% addTiles() %>%
 ```{r echo=TRUE}
 scoremap
 ```
+The restaurants around HSC all appear to have good inspection scores! There does not appear to be a clear geographic pattern in restaurant inspection scores.
+
 <br>
 
 ## Map of chain restaurant scores with heat map of diabetes proportion
@@ -246,7 +248,7 @@ scoremap
 ```{r}
 DMmap
 ```
-
+Cities around Compton and East Los Angeles appear to have higher proportions of diabetes. Examine the local restaurant inspection scores among areas with high proportion diabetes.
 
 <br>
 
@@ -255,7 +257,7 @@ DMmap
 ```{r}
 Obmap
 ```
-
+Obesity appears to follow a similar distribution as diabetes, except that communities with more Asian population have lower levels of obesity (San Gabriel Valley cities). Examine the local restaurant inspection scores among areas with high proportion obesity. 
 
 <br>
 
@@ -264,5 +266,5 @@ Obmap
 ```{r}
 Depmap
 ```
-
+There appears to be higher proportion of depression in coastal cities and lower proportions in Eastern LA. Examine the local restaurant inspection scores among areas with high proportion depression. 
 

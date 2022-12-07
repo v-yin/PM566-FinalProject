@@ -173,7 +173,7 @@ datatable(summary, options = list(), class = "display",
 
 ```
 
-Use the interactive table to explore how cities rank in terms of restaurant inspection scores and public health measures!
+Use the interactive table to explore how cities rank in terms of restaurant inspection scores and public health measures! The city with the highest inspection scores was Long Beach, followed by Calabasas. The city with the lowest inspection scores was Monterey Park.
 
 <br>
 
