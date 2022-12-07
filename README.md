@@ -1,4 +1,4 @@
-See my [webpage](https://v-yin.github.io/PM566-FinalProject/)
+# See my [webpage](https://v-yin.github.io/PM566-FinalProject/)
 
 
 # About my project: "LA County Restaurant Inspection Scores and Community Health"

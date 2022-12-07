@@ -12,7 +12,7 @@ LA County Restaurant Inspection Scores and Community Health
 
 <br>
 
-## Download full report here: 
+## Full Report [Here](https://github.com/v-yin/PM566-FinalProject/blob/main/FinalReport.pdf) [[Download]](https://github.com/v-yin/PM566-FinalProject/raw/main/FinalReport.pdf)
 
 <br>
 
